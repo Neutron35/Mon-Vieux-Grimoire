@@ -1,14 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import mongoCred from './cred.js';
 import path from 'path';
+import 'dotenv/config';
 import userRoutes from './routes/user.js';
 import booksRoutes from './routes/books.js';
 
 const __dirname = import.meta.dirname;
 const app = express();
 
-mongoose.connect(`mongodb+srv://${mongoCred.username}:${mongoCred.pwd}@${mongoCred.address}/?retryWrites=true&w=majority&appName=MVG`,
+mongoose.connect(process.env.DB_DEV,
     { useNewUrlParser: true,
     useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
