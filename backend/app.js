@@ -1,11 +1,11 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const mongoCred = require('./cred');
-const path = require('path');
+import express from 'express';
+import mongoose from 'mongoose';
+import mongoCred from './cred.js';
+import path from 'path';
+import userRoutes from './routes/user.js';
+import booksRoutes from './routes/books.js';
 
-const userRoutes = require('./routes/user');
-const booksRoutes = require('./routes/books');
-
+const __dirname = import.meta.dirname;
 const app = express();
 
 mongoose.connect(`mongodb+srv://${mongoCred.username}:${mongoCred.pwd}@${mongoCred.address}/?retryWrites=true&w=majority&appName=MVG`,
@@ -28,4 +28,4 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth', userRoutes);
 app.use('/api/books', booksRoutes);
 
-module.exports = app;
+export default app;

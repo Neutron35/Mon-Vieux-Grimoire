@@ -1,6 +1,6 @@
-const Book = require('../models/Book');
+import Book from '../models/Book.js';
 
-exports.getOneBook = (req, res, next) => {
+export const getOneBook = (req, res, next) => {
     Book.findOne({
         _id: req.params._id
     }).then(
@@ -16,7 +16,7 @@ exports.getOneBook = (req, res, next) => {
     );
 };
 
-exports.getAllBooks = (req, res, next) => {
+export const getAllBooks = (req, res, next) => {
     Book.find().then(
         (books) => {
             res.status(200).json(books);
@@ -28,9 +28,9 @@ exports.getAllBooks = (req, res, next) => {
             });
         }
     );
-}
+};
 
-exports.createBook = (req, res, next) => {
+export const createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
