@@ -23,7 +23,7 @@ exports.getAllBooks = (req, res, next) => {
         }
     ).catch(
         (error) => {
-            res.status(400).json({
+            res.status(500).json({
                 error: error
             });
         }
@@ -32,10 +32,8 @@ exports.getAllBooks = (req, res, next) => {
 
 exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
-    console.log(bookObject);
     delete bookObject._id;
     delete bookObject._userId;
-    console.log(bookObject);
     const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
@@ -45,5 +43,4 @@ exports.createBook = (req, res, next) => {
     book.save()
         .then(() => { res.status(201).json({ message: 'Livre enregistré !'})})
         .catch(error => { res.status(400).json({ error })})
-    console.log(book);
 };
