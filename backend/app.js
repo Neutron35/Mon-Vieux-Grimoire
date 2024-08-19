@@ -8,11 +8,15 @@ import booksRoutes from './routes/books.js';
 const __dirname = import.meta.dirname;
 const app = express();
 
-mongoose.connect(process.env.DB_DEV,
-    { useNewUrlParser: true,
-    useUnifiedTopology: true })
-    .then(() => console.log('Connexion à MongoDB réussie !'))
-    .catch(() => console.log('Connexion à MongoDB échouée !'));
+try {
+  await mongoose.connect(process.env.DB_DEV, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  console.log('Connexion à MongoDB réussie !');
+} catch {
+  console.log('Connexion à MongoDB échouée !');
+}
 
 app.use(express.json());
 
