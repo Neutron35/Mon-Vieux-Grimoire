@@ -40,6 +40,25 @@ export const getAllBooks = async (req, res, next) => {
   }
 };
 
+export const getBestRatedBooks = async (req, res, next) => {
+  try {
+    const bestRatedBooks = await Book.find()
+      .sort({ averageRating: -1 })
+      .limit(3);
+
+    if (!bestRatedBooks || bestRatedBooks.length === 0) {
+      return res
+        .status(404)
+        .json({ message: 'Livres les mieux notés introuvables.' });
+    }
+    res.status(200).json(bestRatedBooks);
+  } catch (error) {
+    res.status(500).json({
+      error,
+    });
+  }
+};
+
 export const createBook = async (req, res, next) => {
   try {
     const bookObject = req.body.book ? JSON.parse(req.body.book) : null;
