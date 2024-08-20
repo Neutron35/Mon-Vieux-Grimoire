@@ -127,3 +127,34 @@ export const modifyBook = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
+
+export const deleteBook = async (req, res, next) => {
+  try {
+    const book = await Book.findOne({ _id: req.params.id });
+
+    if (!book) {
+      return res.status(404).json({ message: 'Livre non trouvé' });
+    }
+
+    if (book.userId !== req.auth.userId) {
+      res.status(403).json({ message: 'Non autorisé !' });
+    }
+
+    const filename = book.imageUrl.split('/images/')[1];
+
+    fs.unlink(`images/${filename}`, async (unlinkError) => {
+      if (unlinkError) {
+        res.status(500).json({ error: unlinkError });
+      }
+
+      try {
+        await Book.deleteOne({ _id: req.params.id });
+        res.status(200).json({ message: 'Livre supprimé !' });
+      } catch (error) {
+        res.status(401).json({ error });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};

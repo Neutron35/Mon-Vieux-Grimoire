@@ -8,6 +8,7 @@ import {
   getOneBook,
   getBestRatedBooks,
   createBook,
+  deleteBook,
   modifyBook,
 } from '../controllers/books.js';
 
@@ -17,6 +18,7 @@ router.get('/', getAllBooks);
 router.get('/bestrating', getBestRatedBooks);
 router.get('/:id', getOneBook);
 router.put('/:id', auth, multerMiddleware, modifyBook);
+router.delete('/:id', auth, deleteBook);
 router.post('/', auth, multerMiddleware, createBook);
 
 export default router;
