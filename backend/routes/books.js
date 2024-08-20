@@ -8,6 +8,7 @@ import {
   getOneBook,
   getBestRatedBooks,
   createBook,
+  modifyBook,
 } from '../controllers/books.js';
 
 const router = express.Router();
@@ -15,6 +16,7 @@ const router = express.Router();
 router.get('/', getAllBooks);
 router.get('/bestrating', getBestRatedBooks);
 router.get('/:id', getOneBook);
+router.put('/:id', auth, multerMiddleware, modifyBook);
 router.post('/', auth, multerMiddleware, createBook);
 
 export default router;
