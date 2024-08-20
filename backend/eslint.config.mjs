@@ -34,6 +34,7 @@ export default [
       'prettier/prettier': 'error',
       'no-unused-vars': 'error',
       'no-console': 'off',
+      'no-underscore-dangle': 'off',
     },
   },
 ];
