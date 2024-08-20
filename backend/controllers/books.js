@@ -158,3 +158,41 @@ export const deleteBook = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
+
+export const rateBook = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { rating } = req.body;
+    const userId = req.auth.userId;
+
+    if (rating < 0 || rating > 5) {
+      return res
+        .status(400)
+        .json({ message: 'La note doit être comprise entre 0 et 5.' });
+    }
+
+    const book = await Book.findOne({ _id: id });
+
+    if (!book) {
+      return res.status(404).json({ message: 'Livre non trouvé' });
+    }
+
+    if (book.ratings.some((rating) => rating.userId === id)) {
+      res.status(403).json({ message: 'Vous avez déjà noté ce livre' });
+    }
+
+    book.ratings.push({ userId, grade: rating });
+
+    const totalGrades = book.ratings.reduce(
+      (sum, rating) => sum + rating.grade,
+      0,
+    );
+    book.averageRating = totalGrades / book.ratings.length;
+
+    await book.save();
+
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};

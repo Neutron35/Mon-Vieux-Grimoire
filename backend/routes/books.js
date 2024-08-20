@@ -10,6 +10,7 @@ import {
   createBook,
   deleteBook,
   modifyBook,
+  rateBook,
 } from '../controllers/books.js';
 
 const router = express.Router();
@@ -19,6 +20,7 @@ router.get('/bestrating', getBestRatedBooks);
 router.get('/:id', getOneBook);
 router.put('/:id', auth, multerMiddleware, modifyBook);
 router.delete('/:id', auth, deleteBook);
+router.post('/:id/rating', auth, rateBook);
 router.post('/', auth, multerMiddleware, createBook);
 
 export default router;
