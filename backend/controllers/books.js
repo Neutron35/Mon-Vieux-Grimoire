@@ -1,46 +1,69 @@
 import Book from '../models/Book.js';
 
-export const getOneBook = (req, res, next) => {
-    Book.findOne({
-        _id: req.params._id
-    }).then(
-        (book) => {
-            res.status(200).json(book);
-        }
-    ).catch(
-        (error) => {
-            res.status(404).json({
-                error: error
-            });
-        }
-    );
-};
+export const getOneBook = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-export const getAllBooks = (req, res, next) => {
-    Book.find().then(
-        (books) => {
-            res.status(200).json(books);
-        }
-    ).catch(
-        (error) => {
-            res.status(500).json({
-                error: error
-            });
-        }
-    );
-};
+    if (req.params?.id === undefined) {
+      return res.status(400).json({ message: 'ID invalide.' });
+    }
 
-export const createBook = (req, res, next) => {
-    const bookObject = JSON.parse(req.body.book);
-    delete bookObject._id;
-    delete bookObject._userId;
-    const book = new Book({
-        ...bookObject,
-        userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+    const book = await Book.findOne({
+      _id: id,
     });
 
-    book.save()
-        .then(() => { res.status(201).json({ message: 'Livre enregistré !'})})
-        .catch(error => { res.status(400).json({ error })})
+    if (!book) {
+      return res.status(404).json({ message: 'Livre non trouvé.' });
+    }
+
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(500).json({
+      error,
+    });
+  }
+};
+
+export const getAllBooks = async (req, res, next) => {
+  try {
+    const books = await Book.find();
+
+    if (!books) {
+      return res.status(404).json({ message: 'Aucun livre trouvé.' });
+    }
+
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({
+      error,
+    });
+  }
+};
+
+export const createBook = async (req, res, next) => {
+  try {
+    const bookObject = req.body.book ? JSON.parse(req.body.book) : null;
+
+    if (!bookObject) {
+      return res
+        .status(400)
+        .json({ message: 'Erreur de validation des données' });
+    }
+
+    delete bookObject._id;
+    delete bookObject._userId;
+
+    const book = new Book({
+      ...bookObject,
+      userId: req.auth.userId,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      averageRating: 0,
+      ratings: [],
+    });
+
+    await book.save();
+    res.status(201).json({ message: 'Livre ajouté !' });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 };
