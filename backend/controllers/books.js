@@ -1,4 +1,5 @@
 import Book from '../models/Book.js';
+import fs from 'fs';
 
 export const getOneBook = async (req, res, next) => {
   try {
@@ -76,8 +77,6 @@ export const createBook = async (req, res, next) => {
       ...bookObject,
       userId: req.auth.userId,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-      averageRating: 0,
-      ratings: [],
     });
 
     await book.save();
@@ -106,15 +105,6 @@ export const modifyBook = async (req, res, next) => {
 
     if (book.userId !== req.auth.userId) {
       return res.status(401).json({ message: 'Non autorisé !' });
-    }
-
-    if (req.file && book.imageUrl) {
-      const oldFilename = path.basename(book.imageUrl);
-      fs.unlink(path.join('images', oldFilename), (error) => {
-        if (error) {
-          console.error(error);
-        }
-      });
     }
 
     await Book.updateOne(
