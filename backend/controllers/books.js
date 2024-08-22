@@ -107,6 +107,16 @@ export const modifyBook = async (req, res, next) => {
       return res.status(401).json({ message: 'Non autorisé !' });
     }
 
+    if ('imageUrl' in bookObject) {
+      const filename = book.imageUrl.split('/images/')[1];
+
+      fs.unlink(`images/${filename}`, async (unlinkError) => {
+        if (unlinkError) {
+          res.status(500).json({ error: unlinkError });
+        }
+      });
+    }
+
     await Book.updateOne(
       { _id: req.params.id },
       { ...bookObject, _id: req.params.id },
