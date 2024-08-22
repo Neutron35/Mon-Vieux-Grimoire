@@ -1,5 +1,5 @@
-import Book from '../models/Book.js';
 import fs from 'fs';
+import Book from '../models/Book.js';
 
 export const getOneBook = async (req, res) => {
   try {
@@ -47,11 +47,7 @@ export const getBestRatedBooks = async (req, res) => {
       .sort({ averageRating: -1 })
       .limit(3);
 
-    if (!bestRatedBooks || bestRatedBooks.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'Livres les mieux notés introuvables.' });
-    }
+    if (!bestRatedBooks || bestRatedBooks.length === 0) return [];
     res.status(200).json(bestRatedBooks);
   } catch (error) {
     res.status(500).json({
@@ -82,7 +78,7 @@ export const createBook = async (req, res) => {
     await book.save();
     res.status(201).json({ message: 'Livre ajouté !' });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(400).json({ message: 'Erreur de validation des données' });
   }
 };
 
