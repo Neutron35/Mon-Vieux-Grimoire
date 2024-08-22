@@ -5,10 +5,16 @@ import User from '../models/User.js';
 
 export const signup = async (req, res) => {
   try {
+    const { email } = req.body;
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email))
+      return res
+        .status(400)
+        .json({ message: `Format de l'adresse email invalide.` });
     const password = await bcrypt.hash(req.body.password, 10);
     try {
       const user = new User({
-        email: req.body.email,
+        email,
         password,
       });
       await user.save();
