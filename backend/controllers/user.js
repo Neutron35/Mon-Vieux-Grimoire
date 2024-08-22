@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import User from '../models/User.js';
 
-export const signup = async (req, res, next) => {
+export const signup = async (req, res) => {
   try {
     const password = await bcrypt.hash(req.body.password, 10);
     try {
@@ -21,7 +21,7 @@ export const signup = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 

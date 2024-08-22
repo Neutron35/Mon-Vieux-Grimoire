@@ -1,11 +1,11 @@
 import Book from '../models/Book.js';
 import fs from 'fs';
 
-export const getOneBook = async (req, res, next) => {
+export const getOneBook = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (req.params?.id === undefined) {
+    if (!id) {
       return res.status(400).json({ message: 'ID invalide.' });
     }
 
@@ -25,7 +25,7 @@ export const getOneBook = async (req, res, next) => {
   }
 };
 
-export const getAllBooks = async (req, res, next) => {
+export const getAllBooks = async (req, res) => {
   try {
     const books = await Book.find();
 
@@ -41,7 +41,7 @@ export const getAllBooks = async (req, res, next) => {
   }
 };
 
-export const getBestRatedBooks = async (req, res, next) => {
+export const getBestRatedBooks = async (req, res) => {
   try {
     const bestRatedBooks = await Book.find()
       .sort({ averageRating: -1 })
@@ -60,7 +60,7 @@ export const getBestRatedBooks = async (req, res, next) => {
   }
 };
 
-export const createBook = async (req, res, next) => {
+export const createBook = async (req, res) => {
   try {
     const bookObject = req.body.book ? JSON.parse(req.body.book) : null;
 
@@ -137,19 +137,15 @@ export const deleteBook = async (req, res, next) => {
         res.status(500).json({ error: unlinkError });
       }
 
-      try {
-        await Book.deleteOne({ _id: req.params.id });
-        res.status(200).json({ message: 'Livre supprimé !' });
-      } catch (error) {
-        res.status(401).json({ error });
-      }
+      await Book.deleteOne({ _id: req.params.id });
+      res.status(200).json({ message: 'Livre supprimé !' });
     });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
-export const rateBook = async (req, res, next) => {
+export const rateBook = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating } = req.body;
@@ -168,7 +164,7 @@ export const rateBook = async (req, res, next) => {
     }
 
     if (book.ratings.some((rating) => rating.userId === id)) {
-      res.status(403).json({ message: 'Vous avez déjà noté ce livre' });
+      return res.status(403).json({ message: 'Vous avez déjà noté ce livre' });
     }
 
     book.ratings.push({ userId, grade: rating });
