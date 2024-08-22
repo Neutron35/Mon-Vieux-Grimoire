@@ -9,7 +9,7 @@ const __dirname = import.meta.dirname;
 const app = express();
 
 try {
-  await mongoose.connect(process.env.DB_DEV, {
+  await mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
