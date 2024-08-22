@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import Book from '../models/Book.js';
 
 export const getOneBook = async (req, res) => {
@@ -82,7 +82,7 @@ export const createBook = async (req, res) => {
   }
 };
 
-export const modifyBook = async (req, res, next) => {
+export const modifyBook = async (req, res) => {
   try {
     const bookObject = req.file
       ? {
@@ -106,11 +106,7 @@ export const modifyBook = async (req, res, next) => {
     if ('imageUrl' in bookObject) {
       const filename = book.imageUrl.split('/images/')[1];
 
-      fs.unlink(`images/${filename}`, async (unlinkError) => {
-        if (unlinkError) {
-          res.status(500).json({ error: unlinkError });
-        }
-      });
+      await fs.unlink(`images/${filename}`);
     }
 
     await Book.updateOne(
@@ -124,7 +120,7 @@ export const modifyBook = async (req, res, next) => {
   }
 };
 
-export const deleteBook = async (req, res, next) => {
+export const deleteBook = async (req, res) => {
   try {
     const book = await Book.findOne({ _id: req.params.id });
 
@@ -138,14 +134,10 @@ export const deleteBook = async (req, res, next) => {
 
     const filename = book.imageUrl.split('/images/')[1];
 
-    fs.unlink(`images/${filename}`, async (unlinkError) => {
-      if (unlinkError) {
-        res.status(500).json({ error: unlinkError });
-      }
+    await fs.unlink(`images/${filename}`);
 
-      await Book.deleteOne({ _id: req.params.id });
-      res.status(200).json({ message: 'Livre supprimé !' });
-    });
+    await Book.deleteOne({ _id: req.params.id });
+    res.status(200).json({ message: 'Livre supprimé !' });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -155,7 +147,7 @@ export const rateBook = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating } = req.body;
-    const userId = req.auth.userId;
+    const { userId } = req.auth;
 
     if (rating < 0 || rating > 5) {
       return res
@@ -169,14 +161,14 @@ export const rateBook = async (req, res) => {
       return res.status(404).json({ message: 'Livre non trouvé' });
     }
 
-    if (book.ratings.some((rating) => rating.userId === id)) {
+    if (book.ratings.some((bookRating) => bookRating.userId === id)) {
       return res.status(403).json({ message: 'Vous avez déjà noté ce livre' });
     }
 
     book.ratings.push({ userId, grade: rating });
 
     const totalGrades = book.ratings.reduce(
-      (sum, rating) => sum + rating.grade,
+      (sum, bookRating) => sum + bookRating.grade,
       0,
     );
     book.averageRating = totalGrades / book.ratings.length;
