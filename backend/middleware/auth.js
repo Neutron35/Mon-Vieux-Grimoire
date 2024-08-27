@@ -1,5 +1,6 @@
-import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+
+import jwt from 'jsonwebtoken';
 
 export default (req, res, next) => {
   try {

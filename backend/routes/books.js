@@ -1,18 +1,16 @@
 import express from 'express';
-
-import auth from '../middleware/auth.js';
-import multerMiddleware from '../middleware/multer-config.js';
-import sharpMiddleware from '../middleware/sharp-config.js';
-
 import {
-  getAllBooks,
-  getOneBook,
-  getBestRatedBooks,
   createBook,
   deleteBook,
+  getAllBooks,
+  getBestRatedBooks,
+  getOneBook,
   modifyBook,
   rateBook,
 } from '../controllers/books.js';
+import auth from '../middleware/auth.js';
+import multerMiddleware from '../middleware/multer-config.js';
+import sharpMiddleware from '../middleware/sharp-config.js';
 
 const router = express.Router();
 
