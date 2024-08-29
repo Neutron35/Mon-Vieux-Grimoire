@@ -36,6 +36,7 @@ export default [
       'no-console': 'off',
       'no-underscore-dangle': 'off',
       'consistent-return': 'off',
+      'import/extensions': 'never',
     },
   },
 ];
