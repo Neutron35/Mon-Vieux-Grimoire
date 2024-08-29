@@ -29,10 +29,6 @@ export const getAllBooks = async (req, res) => {
   try {
     const books = await Book.find();
 
-    if (!books) {
-      return res.status(404).json({ message: 'Aucun livre trouvé.' });
-    }
-
     res.status(200).json(books);
   } catch (error) {
     res.status(500).json({
@@ -47,7 +43,6 @@ export const getBestRatedBooks = async (req, res) => {
       .sort({ averageRating: -1 })
       .limit(3);
 
-    if (!bestRatedBooks || bestRatedBooks.length === 0) return [];
     res.status(200).json(bestRatedBooks);
   } catch (error) {
     res.status(500).json({
