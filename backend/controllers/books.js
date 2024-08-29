@@ -100,7 +100,7 @@ export const modifyBook = async (req, res) => {
     }
 
     if (book.userId !== req.auth.userId) {
-      return res.status(401).json({ message: 'Non autorisé !' });
+      return res.status(403).json({ message: 'Non autorisé !' });
     }
 
     if ('imageUrl' in bookObject) {
