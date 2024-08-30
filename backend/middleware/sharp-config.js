@@ -28,7 +28,7 @@ const optimizeImage = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Error processing image:', error);
+    console.error('Erreur de traitement image :', error);
     next(error);
   }
 };
