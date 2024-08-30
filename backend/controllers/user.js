@@ -39,6 +39,14 @@ export const login = async (req, res) => {
         .json({ message: 'Paire identifiant/mot de passe incorrecte' });
     }
 
+    const valid = await bcrypt.compare(req.body.password, user.password);
+
+    if (!valid) {
+      return res
+        .status(401)
+        .json({ message: 'Paire identifiant/mot de passe incorrecte' });
+    }
+
     const token = jwt.sign({ userId: user._id }, process.env.TOKEN, {
       expiresIn: '24h',
     });
